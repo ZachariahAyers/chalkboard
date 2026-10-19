@@ -1,38 +1,21 @@
-# Multi-stage build for Chalkboard
-FROM node:22-alpine AS builder
-
+FROM node:24-alpine AS build
 WORKDIR /app
+COPY package.json package-lock.json ./
+COPY client/package.json client/
+COPY server/package.json server/
+RUN npm ci
+COPY client client
+RUN npm run build
 
-# Copy package files for dependency installation
-COPY package*.json ./
-COPY yarn.lock ./
-COPY client/package*.json ./client/
-COPY server/package*.json ./server/
-
-# Install dependencies
-RUN npm install
-RUN cd client && npm install
-RUN cd server && npm install
-
-# Copy source code
-COPY . .
-
-# Build client
-RUN cd client && npm run build
-
-# Production stage
-FROM node:22-alpine
-
-WORKDIR /app/server
-
-# Copy server package files and install production dependencies
-COPY --from=builder /app/server/package.json ./
-RUN npm install --only=production
-
-# Copy server source and client build
-COPY --from=builder /app/server .
-COPY --from=builder /app/client/build ../client/build
-
+FROM node:24-alpine
+ENV NODE_ENV=production
+WORKDIR /app
+COPY package.json package-lock.json ./
+COPY client/package.json client/
+COPY server/package.json server/
+RUN npm ci --omit=dev --workspace server
+COPY server server
+COPY --from=build /app/client/dist client/dist
+USER node
 EXPOSE 3000
-
-CMD ["node", "index.js"]
+CMD ["node", "server/index.js"]
