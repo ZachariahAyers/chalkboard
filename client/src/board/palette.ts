@@ -1,4 +1,4 @@
-// Chalk white first, then the Material 500 swatches the original color picker offered.
+// Chalk white first, then the Material 500 swatches.
 export const COLORS = [
   "#ffffff",
   "#f44336",

@@ -20,7 +20,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [2.0.0]
 
-A rebuild of the same product on a current, typed stack. It has the same tools, the same palette and the same live user list.
+Built on a current, typed stack, with drawing tools, a colour palette and a live user list.
 
 ### Changed
 
@@ -44,10 +44,5 @@ A rebuild of the same product on a current, typed stack. It has the same tools, 
 
 - The Heroku and EC2 deployment setup, Create React App, the service worker, CORS configuration, `xss-clean`, and the unused `/users` HTTP route.
 
-## [1.0.0]
-
-The original Chalkboard: React 18 and Create React App, react-p5, Material-UI, and an Express and Socket.IO server deployed to Heroku and later to EC2. It had brush, eraser, circle and square tools, a colour picker and a user list. Tagged `v1`.
-
 [Unreleased]: https://github.com/ZachariahAyers/chalkboard/compare/v2.0.0...HEAD
-[2.0.0]: https://github.com/ZachariahAyers/chalkboard/compare/v1...v2.0.0
-[1.0.0]: https://github.com/ZachariahAyers/chalkboard/tree/v1
+[2.0.0]: https://github.com/ZachariahAyers/chalkboard/tree/v2.0.0
