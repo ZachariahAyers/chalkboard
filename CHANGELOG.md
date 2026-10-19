@@ -20,29 +20,22 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [2.0.0]
 
-Built on a current, typed stack, with drawing tools, a colour palette and a live user list.
-
-### Changed
-
-- TypeScript throughout. Node 24 runs the server's `.ts` files directly, and Vite builds the client.
-- One wire contract, `shared/protocol.ts`, types both ends of the Socket.IO connection. The `line`, `circle` and `square` events are now `segment` and `stamp`, and the user list is now `users` with `{ id, name }` entries.
-- The board has a fixed size, 1600 × 1000, scaled to fit each screen. Before this, each client used its own window size, so the same stroke landed in different places on different screens.
-- Presence is keyed by connection and updated when someone leaves. Before, a timer dropped the oldest name once a minute, and names stayed listed after people left.
-- The server relays only a validated copy of each message. It checks the colour, the stroke weight, and that coordinates are on the board.
-- The canvas loads only after joining, through `React.lazy`. p5 is loaded from its modular entry, so the initial page script fell from 1.56 MB to 311 KB minified.
-- React 19, Vite 8, p5.js 2, Express 5, Socket.IO 4.8, Helmet 8 and ESLint 10 with type-aware typescript-eslint rules.
-- A native `<dialog>` and plain CSS replace Material-UI and react-color.
-- The Docker image is multi-stage on `node:24-alpine` and runs as the non-root `node` user.
+A real-time shared chalkboard: React and p5.js in the browser, with a typed Socket.IO relay on Node.
 
 ### Added
 
+- TypeScript throughout. Node 24 runs the server's `.ts` files directly, and Vite builds the client.
+- One wire contract, `shared/protocol.ts`, types both ends of the Socket.IO connection: `segment` and `stamp` for drawing, and `users` with `{ id, name }` entries for presence.
+- The board has a fixed size, 1600 × 1000, scaled to fit each screen, so a stroke lands in the same place on every screen.
+- Presence is keyed by connection and updated when someone leaves.
+- The server relays only a validated copy of each message. It checks the colour, the stroke weight, and that coordinates are on the board.
+- The canvas loads only after joining, through `React.lazy`, and p5 loads from its modular entry, so the initial page script is 311 KB minified.
+- React 19, Vite 8, p5.js 2, Express 5, Socket.IO 4.8, Helmet 8 and ESLint 10 with type-aware typescript-eslint rules.
+- A native `<dialog>` and plain CSS.
+- The Docker image is multi-stage on `node:24-alpine` and runs as the non-root `node` user.
 - Unit tests for the contract, presence, and input-to-message logic. A sync test checks that a stroke renders identically before and after the network. An integration test runs two real clients against the relay.
 - CI on GitHub Actions: typecheck, lint, unit tests, integration test and build.
 - `CLAUDE.md`, `.claude/settings.json` and `docs/ARCHITECTURE.md` for development with Claude Code.
-
-### Removed
-
-- The Heroku and EC2 deployment setup, Create React App, the service worker, CORS configuration, `xss-clean`, and the unused `/users` HTTP route.
 
 [Unreleased]: https://github.com/ZachariahAyers/chalkboard/compare/v2.0.0...HEAD
 [2.0.0]: https://github.com/ZachariahAyers/chalkboard/tree/v2.0.0
