@@ -36,10 +36,10 @@ The display name travels in the handshake query (`io({ query: { username } })`).
 
 ## Server: `server/src`
 
-- `server.ts`: `createChalkboardServer(clientDir)` builds the HTTP server and the Socket.IO server without listening, so the integration test can choose its own port. When a client connects, it joins the presence list and everyone receives the new list. Its `segment` and `stamp` events are parsed and sent to all other clients (`socket.broadcast`). When it disconnects, it leaves the list.
+- `server.ts`: `createChalkboardServer(clientDir, path)` builds the HTTP server and the Socket.IO server without listening, so the integration test can choose its own port. When a client connects, it joins the presence list and everyone receives the new list. Its `segment` and `stamp` events are parsed and sent to all other clients (`socket.broadcast`). When it disconnects, it leaves the list.
 - `presence.ts`: an ordered map from socket id to name. Users are keyed by connection, so two people can share a name.
 - `app.ts`: Express with Helmet security headers and compression, serving the built client.
-- `index.ts`: reads `PORT`, starts listening, and closes Socket.IO on `SIGTERM`.
+- `index.ts`: reads `PORT` (the Socket.IO path comes from `SOCKET_PATH`, default `/socket.io/`), starts listening, and closes Socket.IO on `SIGTERM`.
 
 Node 24 runs these TypeScript files directly, using type stripping. There is no server build step. That is why the code is limited to erasable syntax and imports carry `.ts` extensions.
 
@@ -58,6 +58,7 @@ The canvas is drawn at board resolution and scaled by CSS to fit its grid cell. 
 
 - Development: Vite serves the client on port 5173 and proxies `/socket.io`, including WebSocket upgrades, to the Node server on port 3000.
 - Production: one Node process serves `client/dist` and Socket.IO on the same origin, so no CORS is needed. The Docker image builds the client in one stage. The runtime stage holds only the server's production dependencies and runs as the `node` user.
+- Demo: the `demo` workflow builds the client with `--base=/opensource/chalkboard/` and publishes it to the site; the client connects to `<base>socket.io/`. The relay runs from the Docker image with `SOCKET_PATH=/opensource/chalkboard/socket.io/`, so both ends use the same path.
 
 ## Tests
 
@@ -66,3 +67,4 @@ The canvas is drawn at board resolution and scaled by CSS to fit its grid cell. 
 - `client/src/board/tools.test.ts`: which input produces which message.
 - `client/src/board/sync.test.ts`: a stroke drawn locally is identical to the same stroke after JSON serialisation, server validation and remote rendering.
 - `server/test/relay.test.ts` (`npm run test:integration`): two real clients over WebSocket. It covers presence updates, relay to others only, dropping invalid payloads, stripping extra fields, and leaving.
+- `server/test/path.test.ts` (`npm run test:integration`): a relay on a moved Socket.IO path answers the polling handshake there and not on `/socket.io/`.

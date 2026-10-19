@@ -4,6 +4,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- `SOCKET_PATH` moves the server's Socket.IO path, and the client derives its path from its build base, so the app can be served under a prefix.
+- A `demo` workflow that publishes the client to ayers.repair/opensource/chalkboard/ and redeploys the relay image.
+
 ## [2.0.0]
 
 A rebuild of the same product on a current, typed stack. It has the same tools, the same palette and the same live user list.

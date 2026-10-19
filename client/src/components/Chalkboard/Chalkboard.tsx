@@ -27,8 +27,8 @@ export default function Chalkboard({ name }: Props) {
   useEffect(() => {
     const host = canvasHost.current;
     if (!host) return;
-    // The page and Socket.IO share an origin, so io() needs no URL.
-    const socket: BoardSocket = io({ query: { username: name } });
+    // The page and Socket.IO share an origin, so io() needs no URL; the path follows the page's base.
+    const socket: BoardSocket = io({ path: `${import.meta.env.BASE_URL}socket.io/`, query: { username: name } });
     socket.on("users", setUsers);
     const unmountBoard = mountBoard(host, socket, () => brush.current);
     return () => {

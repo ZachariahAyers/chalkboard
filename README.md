@@ -4,6 +4,8 @@
 
 A shared chalkboard in the browser: everyone on the page draws on the same board, and each stroke appears on every other screen as it is drawn.
 
+Live demo: [ayers.repair/opensource/chalkboard](https://ayers.repair/opensource/chalkboard/).
+
 ## Features
 
 - Brush, eraser, circle and square tools

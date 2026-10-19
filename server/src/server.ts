@@ -13,10 +13,13 @@ import { createPresence } from "./presence.ts";
 
 type ChalkboardServer = Server<ClientToServerEvents, ServerToClientEvents, Record<string, never>, SocketData>;
 
+/** The Socket.IO path: SOCKET_PATH, or Socket.IO's default. The client must use the same path. */
+export const socketPath = (env: NodeJS.ProcessEnv = process.env): string => env.SOCKET_PATH ?? "/socket.io/";
+
 /** Builds the HTTP server and the Socket.IO relay without listening, so tests can pick the port. */
-export function createChalkboardServer(clientDir: string) {
+export function createChalkboardServer(clientDir: string, path = socketPath()) {
   const httpServer = createServer(createApp(clientDir));
-  const io: ChalkboardServer = new Server(httpServer);
+  const io: ChalkboardServer = new Server(httpServer, { path });
   const presence = createPresence();
   const publishUsers = () => io.emit("users", presence.list());
 
