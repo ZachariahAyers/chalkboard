@@ -1,24 +1,32 @@
 import js from "@eslint/js";
 import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
+import tseslint from "typescript-eslint";
 import { defineConfig } from "eslint/config";
 
 export default defineConfig([
   { ignores: ["**/dist/**"] },
-  js.configs.recommended,
   {
-    files: ["server/**/*.js", "eslint.config.js"],
+    files: ["eslint.config.js"],
+    extends: [js.configs.recommended],
     languageOptions: { globals: globals.node },
   },
   {
-    files: ["client/**/*.{js,jsx}"],
+    files: ["**/*.{ts,tsx}"],
+    extends: [js.configs.recommended, tseslint.configs.strictTypeChecked, tseslint.configs.stylisticTypeChecked],
     languageOptions: {
-      globals: globals.browser,
-      parserOptions: { ecmaFeatures: { jsx: true } },
+      parserOptions: { projectService: true },
+    },
+    rules: {
+      "@typescript-eslint/no-floating-promises": [
+        "error",
+        { allowForKnownSafeCalls: [{ from: "package", name: ["test"], package: "node:test" }] },
+      ],
     },
   },
   {
-    files: ["client/**/*.jsx"],
+    files: ["client/**/*.tsx"],
     extends: [reactHooks.configs.flat.recommended],
+    languageOptions: { globals: globals.browser },
   },
 ]);

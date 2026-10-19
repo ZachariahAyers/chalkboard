@@ -1,7 +1,7 @@
 {
   "name": "chalkboard",
   "version": "2.0.0",
-  "description": "A real-time collaborative chalkboard: draw together in the browser over Socket.IO.",
+  "description": "A real-time shared chalkboard: React and p5.js in the browser, a typed Socket.IO relay on Node.",
   "private": true,
   "type": "module",
   "workspaces": [
@@ -13,8 +13,11 @@
     "dev:server": "npm run dev --workspace server",
     "build": "npm run build --workspace client",
     "start": "npm start --workspace server",
+    "typecheck": "tsc -p shared && tsc -p server && tsc -p client",
     "lint": "eslint .",
-    "test": "node --test \"server/*.test.js\""
+    "test": "node --test \"shared/**/*.test.ts\" \"server/src/**/*.test.ts\" \"client/src/**/*.test.ts\"",
+    "test:integration": "node --test \"server/test/**/*.test.ts\"",
+    "check": "npm run typecheck && npm run lint && npm test && npm run build"
   },
   "keywords": [
     "drawing",
@@ -23,7 +26,7 @@
     "socket.io",
     "react",
     "p5js",
-    "express",
+    "typescript",
     "vite"
   ],
   "author": {
@@ -32,12 +35,15 @@
   },
   "license": "Apache-2.0",
   "engines": {
-    "node": ">=22.12"
+    "node": ">=24.12"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/node": "^24.19.2",
     "eslint": "^10.13.0",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "globals": "^17.13.0"
+    "globals": "^17.13.0",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.71.2"
   }
 }
