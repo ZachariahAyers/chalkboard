@@ -1,0 +1,33 @@
+.user-palette {
+  margin: 10px 0;
+  overflow-y: auto;
+  background: var(--panel);
+  border-radius: var(--radius) 0 0 var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.user-palette h3 {
+  margin: 0;
+  padding: 6px 0;
+  text-align: center;
+  color: #ffffff;
+  background: var(--primary-dark);
+  border-top-left-radius: var(--radius);
+}
+
+.user-palette ul {
+  margin: 0;
+  padding: 8px 12px;
+  list-style: none;
+}
+
+.user-palette li {
+  padding: 4px 0;
+  overflow-wrap: anywhere;
+}
+
+.user-palette__empty {
+  margin: 8px 12px;
+  font-size: 14px;
+  opacity: 0.6;
+}

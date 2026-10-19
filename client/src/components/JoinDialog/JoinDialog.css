@@ -1,0 +1,41 @@
+.join-dialog {
+  border: none;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  width: min(360px, calc(100% - 32px));
+  box-sizing: border-box;
+}
+
+.join-dialog::backdrop {
+  background: rgb(0 0 0 / 60%);
+}
+
+.join-dialog form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.join-dialog h2 {
+  margin: 0;
+  font-family: "Rowdies", cursive;
+  color: var(--primary);
+}
+
+.join-dialog input {
+  font: inherit;
+  padding: 8px 10px;
+  border: 1px solid #bdbdbd;
+  border-radius: 6px;
+}
+
+.join-dialog button {
+  align-self: flex-end;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: var(--primary);
+  color: #ffffff;
+  font-weight: 900;
+}

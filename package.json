@@ -1,39 +1,43 @@
 {
   "name": "chalkboard",
-  "version": "1.0.0",
-  "description": "A realtime drawing app using Socket IO",
-  "main": "server/index.js",
-  "scripts": {
-    "build": "cd client && npm run build",
-    "start": "cd server && npm run start:prod"
-  },
+  "version": "2.0.0",
+  "description": "A real-time collaborative chalkboard: draw together in the browser over Socket.IO.",
   "private": true,
+  "type": "module",
   "workspaces": [
     "client",
     "server"
   ],
+  "scripts": {
+    "dev:client": "npm run dev --workspace client",
+    "dev:server": "npm run dev --workspace server",
+    "build": "npm run build --workspace client",
+    "start": "npm start --workspace server",
+    "lint": "eslint .",
+    "test": "node --test \"server/*.test.js\""
+  },
   "keywords": [
     "drawing",
-    "socket io",
-    "javascript",
-    "socket",
-    "sockets",
+    "whiteboard",
+    "real-time",
+    "socket.io",
     "react",
+    "p5js",
     "express",
-    "p5",
-    "mongoose",
-    "mongodb"
+    "vite"
   ],
   "author": {
     "name": "Zachariah Ayers",
-    "email": "zach@meridianvega.com",
-    "company": "Meridian Vega"
+    "url": "https://ayers.repair"
   },
   "license": "Apache-2.0",
   "engines": {
-    "node": "22.20.0"
+    "node": ">=22.12"
   },
-  "dependencies": {
-    "ajv": "^8.17.1"
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.13.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.13.0"
   }
 }
