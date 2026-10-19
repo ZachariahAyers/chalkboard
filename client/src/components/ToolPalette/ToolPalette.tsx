@@ -1,16 +1,24 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircle, faEraser, faPaintbrush, faSquare } from "@fortawesome/free-solid-svg-icons";
-import { COLORS } from "../../palette";
+import { faCircle, faEraser, faPaintbrush, faSquare, type IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import { COLORS } from "../../board/palette.ts";
+import type { Tool } from "../../board/tools.ts";
 import "./ToolPalette.css";
 
-const TOOLS = [
-  { id: "CIRCLE", label: "Circle", icon: faCircle },
-  { id: "SQUARE", label: "Square", icon: faSquare },
-  { id: "BRUSH", label: "Brush", icon: faPaintbrush },
-  { id: "ERASE", label: "Eraser", icon: faEraser },
+const TOOLS: { id: Tool; label: string; icon: IconDefinition }[] = [
+  { id: "circle", label: "Circle", icon: faCircle },
+  { id: "square", label: "Square", icon: faSquare },
+  { id: "brush", label: "Brush", icon: faPaintbrush },
+  { id: "eraser", label: "Eraser", icon: faEraser },
 ];
 
-export default function ToolPalette({ activeTool, activeColor, onToolChange, onColorChange }) {
+interface Props {
+  activeTool: Tool;
+  activeColor: string;
+  onToolChange: (tool: Tool) => void;
+  onColorChange: (color: string) => void;
+}
+
+export default function ToolPalette({ activeTool, activeColor, onToolChange, onColorChange }: Props) {
   return (
     <aside className="tool-palette">
       <div className="palette-card swatches" role="group" aria-label="Color">
@@ -22,7 +30,9 @@ export default function ToolPalette({ activeTool, activeColor, onToolChange, onC
             title={color}
             aria-label={`Color ${color}`}
             aria-pressed={color === activeColor}
-            onClick={() => onColorChange(color)}
+            onClick={() => {
+              onColorChange(color);
+            }}
           >
             <svg viewBox="0 0 20 20" aria-hidden="true">
               <circle cx="10" cy="10" r="9" fill={color} />
@@ -39,7 +49,9 @@ export default function ToolPalette({ activeTool, activeColor, onToolChange, onC
             title={label}
             aria-label={label}
             aria-pressed={id === activeTool}
-            onClick={() => onToolChange(id)}
+            onClick={() => {
+              onToolChange(id);
+            }}
           >
             <FontAwesomeIcon icon={icon} />
           </button>

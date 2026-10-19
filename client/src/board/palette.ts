@@ -19,6 +19,7 @@ export const COLORS = [
   "#ff5722",
   "#795548",
   "#607d8b",
-];
+] as const;
 
+/** The board background; the eraser paints with it. */
 export const BOARD_COLOR = "#191919";

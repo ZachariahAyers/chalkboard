@@ -1,4 +1,4 @@
-.user-palette {
+.user-list {
   margin: 10px 0;
   overflow-y: auto;
   background: var(--panel);
@@ -6,7 +6,7 @@
   box-shadow: var(--shadow);
 }
 
-.user-palette h3 {
+.user-list h3 {
   margin: 0;
   padding: 6px 0;
   text-align: center;
@@ -15,18 +15,18 @@
   border-top-left-radius: var(--radius);
 }
 
-.user-palette ul {
+.user-list ul {
   margin: 0;
   padding: 8px 12px;
   list-style: none;
 }
 
-.user-palette li {
+.user-list li {
   padding: 4px 0;
   overflow-wrap: anywhere;
 }
 
-.user-palette__empty {
+.user-list__empty {
   margin: 8px 12px;
   font-size: 14px;
   opacity: 0.6;
