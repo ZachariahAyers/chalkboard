@@ -1,80 +1,110 @@
 # Chalkboard
 
-A real-time collaborative drawing application built with React, Socket.IO, and p5.js.
+A shared chalkboard in the browser. Everyone who opens the page draws on the same canvas, and every stroke appears on every other screen as it is drawn.
 
-[View Portfolio](https://zachayers.io) | [Live Demo](https://www.chalkboard.zachayers.io)
+By [Zachariah Ayers](https://ayers.repair) · [GitHub](https://github.com/ZachariahAyers)
 
-## About
+## Why it is interesting
 
-Chalkboard is a web-based drawing application enabling multiple users to draw together in real-time. Features drawing tools, color selection, user presence, and instant synchronization across all connected clients.
+Chalkboard keeps no drawing on the server. The server checks each drawing event and passes it on to the other clients. It never stores the picture.
 
-## Built With
+- **Strokes travel as line segments.** While the mouse drags, the client draws a short segment from the previous pointer position to the current one. It then sends that segment as one small Socket.IO event. Other clients replay the same segment, so a stroke looks smooth everywhere.
+- **The server checks before it relays.** Each `line`, `circle` and `square` payload is validated before it is broadcast: a six-digit hex colour, finite coordinates and a bounded stroke weight. A bad payload is dropped, so one client cannot send junk to the rest of the room.
+- **Presence follows the connection.** Users are tracked by socket id. The full list is sent again whenever someone joins or leaves, so the list always matches who is connected.
+- **One process, one origin.** In production a single Node server serves the built client and Socket.IO on the same port, so no CORS setup is needed. In development, Vite proxies `/socket.io` to the Node server.
 
-- React
-- Socket.IO
-- p5.js (react-p5)
-- Express.js
-- Material-UI
-- Node.js
-- Yarn Workspaces
+The board is shared live and is not saved. Someone who joins late sees new strokes from that point on, not the strokes drawn before they arrived.
 
-## Getting Started
+## Features
 
-### Prerequisites
+- Brush, eraser, circle and square tools
+- A 19-colour palette, with chalk white as the default
+- A live list of the people at the board
+- A name prompt on entry, with a generated guest name if you leave it blank
 
-- Node.js 12.x or higher
-- Yarn package manager
+## Stack
 
-### Installation
+| Layer   | Technology                                         |
+| ------- | -------------------------------------------------- |
+| Client  | React 19, p5.js 2, Socket.IO client, Font Awesome  |
+| Build   | Vite 8                                             |
+| Server  | Node.js, Express 5, Socket.IO 4, Helmet            |
+| Quality | ESLint 10, the Node test runner, GitHub Actions CI |
+| Deploy  | Multi-stage Docker image on `node:24-alpine`       |
+
+## Running it
+
+You need Node.js 22.12 or newer.
 
 ```bash
-git clone https://github.com/N73311/chalkboard.git
+git clone https://github.com/ZachariahAyers/chalkboard.git
 cd chalkboard
-yarn install
+npm install
 ```
 
 ### Development
 
-Start server:
-```bash
-cd server
-yarn dev
-```
-
-Start client (in new terminal):
-```bash
-cd client
-yarn start
-```
-
-Application runs at `http://localhost:3000`.
-
-### Build
+Run the server and the client in two terminals:
 
 ```bash
-yarn build
-yarn start
+npm run dev:server   # Socket.IO and Express on http://localhost:3000, restarts on change
+npm run dev:client   # Vite on http://localhost:5173, proxies /socket.io to port 3000
 ```
 
-## Project Structure
+Open http://localhost:5173 in two browser windows and draw in either one.
+
+### Production
+
+```bash
+npm run build   # builds the client into client/dist
+npm start       # serves client/dist and Socket.IO on http://localhost:3000
+```
+
+Set `PORT` to change the port.
+
+### Docker
+
+```bash
+docker build -t chalkboard .
+docker run -p 3000:3000 chalkboard
+```
+
+### Checks
+
+```bash
+npm run lint   # ESLint across client and server
+npm test       # unit tests for the server's payload validation
+```
+
+## Project structure
 
 ```
 chalkboard/
-├── client/        # React frontend
-│   ├── src/
-│   │   └── components/
-│   └── package.json
-├── server/        # Express backend
-│   ├── app.js
-│   ├── index.js
-│   └── package.json
-└── package.json   # Workspace root
+├── client/                    React app, built with Vite
+│   ├── index.html
+│   ├── vite.config.js         dev proxy for /socket.io
+│   ├── public/                favicon and logo
+│   └── src/
+│       ├── main.jsx           entry point
+│       ├── palette.js         drawing colours and the board colour
+│       ├── draw.js            line, circle and square drawing shared by local and remote input
+│       └── components/
+│           ├── App/           shows the join prompt, then opens the socket
+│           ├── JoinDialog/    name prompt
+│           ├── Chalkboard/    p5 canvas and socket event wiring
+│           ├── ToolPalette/   colours and tools
+│           ├── UserPalette/   list of connected users
+│           └── Header/
+├── server/
+│   ├── index.js               HTTP server, Socket.IO, presence and relay
+│   ├── app.js                 Express: security headers, compression, static client
+│   ├── messages.js            payload and username validation
+│   └── messages.test.js
+├── eslint.config.js
+├── Dockerfile
+└── package.json               npm workspaces root
 ```
 
 ## License
 
-Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for details.
-
-## Author
-
-Zachariah Ayers - [zachayers.io](https://zachayers.io)
+Apache License 2.0. See [LICENSE](LICENSE).
