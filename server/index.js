@@ -1,83 +1,39 @@
-// IMPORT MODULES
-const socket = require("socket.io");
+import { createServer } from "node:http";
+import { Server } from "socket.io";
+import { app } from "./app.js";
+import { cleanName, isLine, isShape } from "./messages.js";
 
-//!LISTENER FOR UNCAUGHT EXCEPTIONS
-// Safety net in case exceptions are not caught explicitly
-process.on("uncaughtException", (err) => {
-  console.log(err);
-  console.log(err.name, err.message);
-  console.log("UNHANDLED EXCEPTION! Shutting Down...");
-  process.exit(1);
-});
+const PORT = Number(process.env.PORT) || 3000;
 
-const app = require("./app");
+const server = createServer(app);
+const io = new Server(server);
 
-const userCache = [];
+// Connected users, keyed by socket id.
+const users = new Map();
+const broadcastUsers = () => io.emit("user-list", [...users.values()]);
 
-app.get("/users", (req, res) => {
-  res.status(200).send(userCache);
-});
-
-setInterval(() => {
-  if (userCache.length > 0) {
-    userCache.shift();
-  }
-}, 60000);
-
-// START SERVER
-const PORT = process.env.PORT || 3000;
-const server = app.listen(PORT, () => {
-  console.log(`App running on port ${PORT}...`);
-});
-
-// Setup Socket IO Connection with CORS
-const io = socket(server, {
-  cors: {
-    origin: ["http://localhost:3000", "http://localhost:3001", "https://chalkboard.zachayers.io"],
-    methods: ["GET", "POST"],
-    credentials: true
-  }
-});
-
-io.sockets.on("connection", (socket) => {
-  const newUser = socket.handshake.query["username"];
-  userCache.push(newUser);
-
-  // Send the current user list including the new user to the connecting client
-  socket.emit("user-list", userCache);
-
-  // Notify all other users about the new user
-  socket.broadcast.emit("new-user", newUser);
-
-  // Watch for incoming socket connection mouse events
-  socket.on("line", (data) => {
-    socket.broadcast.emit("line", data);
+const relay = (socket, event, isValid) => {
+  socket.on(event, (data) => {
+    if (isValid(data)) socket.broadcast.emit(event, data);
   });
+};
 
-  socket.on("circle", (data) => {
-    socket.broadcast.emit("circle", data);
-  });
+io.on("connection", (socket) => {
+  users.set(socket.id, cleanName(socket.handshake.query.username));
+  broadcastUsers();
 
-  socket.on("square", (data) => {
-    socket.broadcast.emit("square", data);
+  relay(socket, "line", isLine);
+  relay(socket, "circle", isShape);
+  relay(socket, "square", isShape);
+
+  socket.on("disconnect", () => {
+    users.delete(socket.id);
+    broadcastUsers();
   });
 });
 
-//!LISTENER FOR UNHANDLED REJECTIONS
-// Safety net in case promise rejections are not caught explicitly
-process.on("unhandledRejection", (err) => {
-  console.log(err.name, err.message);
-  console.log("UNHANDLED REJECTION! Shutting Down...");
-  server.close(() => {
-    process.exit(1);
-  });
+server.listen(PORT, () => {
+  console.log(`Chalkboard listening on http://localhost:${PORT}`);
 });
 
-//!LISTENER FOR SIGTERM SIGNAL
-process.on("SIGTERM", () => {
-  console.log("SIGTERM RECEIVED! Shutting Down");
-  server.close(() => {
-    console.log("PROCESS TERMINATED!");
-    //Sigterm shuts down the program here
-  });
-});
+process.on("SIGTERM", () => io.close());
