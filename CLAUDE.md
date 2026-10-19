@@ -14,7 +14,7 @@ Node 24.12 or newer. Run everything from the repo root.
 - `npm run test:integration`: real Socket.IO relay on an ephemeral port
 - `npm run build`: Vite production build to `client/dist`
 - `npm run check`: typecheck, lint, unit tests and build in one command
-- Workflows: `ci.yml` runs the checks; `demo.yml` publishes the client to ayers.repair/opensource/chalkboard/ and redeploys the relay image on a push to `master`.
+- Workflows: `ci.yml` runs the checks. After they pass on a push to `master`, its `demo-client` and `demo-relay` jobs publish the client to ayers.repair/opensource/chalkboard/ and redeploy the relay image.
 - `npm run dev:server` and `npm run dev:client`: development, in two terminals. The client is at http://localhost:5173.
 
 ## Layout
