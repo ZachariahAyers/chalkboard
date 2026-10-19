@@ -7,7 +7,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - `SOCKET_PATH` moves the server's Socket.IO path, and the client derives its path from its build base, so the app can be served under a prefix.
-- A `demo` workflow that publishes the client to ayers.repair/opensource/chalkboard/ and redeploys the relay image.
+- Demo jobs in `ci.yml` that publish the client to ayers.repair/opensource/chalkboard/ and redeploy the relay image once the checks pass on `master`.
+
+### Fixed
+
+- The header logo loads under a base path.
+- Lato and Rowdies are served from the app (`@fontsource`) instead of Google Fonts, which the site's CSP blocks.
+
+### Removed
+
+- The unused `logo512.png` and the Create React App `robots.txt`.
 
 ## [2.0.0]
 
